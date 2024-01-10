@@ -1,6 +1,6 @@
 import pytest
 from sympy import simplify, sympify
-from result_unit.result_unit import post_order
+from result_unit import post_order
 
 FORMULAS = ["x + y", "x - y", "x * y", "x / y", "x**2", "(x + y) / y", "(x + y) + y"]
 
@@ -14,10 +14,14 @@ FORMULAS = ["x + y", "x - y", "x * y", "x / y", "x**2", "(x + y) / y", "(x + y) 
     ({"x": "m", "y": "m"}, "x * y", 'm*m'),
     ({"x": "m", "y": "s"}, "x / y", 'm/s'),
     ({"x": "m", "y": "m"}, "x / y", ''),
-    ({"x": "m", "y": "s"}, "x**2", 'Unhandled Operator'),
-    ({"x": "m", "y": "m"}, "x**2", 'Unhandled Operator'),
+    ({"x": "m", "y": "s"}, "x * y / (x + y)", 'Dimension Mismatch'),    # 999
+    ({"x": "m", "y": "m"}, "x * y / (x + y)", 'm*m/m'),                     # 999
+    ({"x": "m", "y": "s"}, "x**2 / y", 'm*m/s'),    # 998
+    ({"x": "m", "y": "m"}, "x**2 / y", 'm'),        # 998
+    ({"x": "m", "y": "s"}, "x**2 / y", 'm*m/s'),
+    ({"x": "m", "y": "m"}, "x**2 / y", 'm'),
     ({"x": "m", "y": "s"}, "(x + y) / y", 'Dimension Mismatch'),
-    ({"x": "m", "y": "m"}, "(x + y) / y", 'm/m'),
+    ({"x": "m", "y": "m"}, "(x + y) / y", ''),
     ({"x": "m", "y": "s"}, "(x + y) + y", 'Dimension Mismatch'),
     ({"x": "m", "y": "m"}, "(x + y) + y", 'm'),
 ])
@@ -35,4 +39,4 @@ def test_simplify_equivalent_formulas():
 
 if __name__ == '__main__':
     pytest.main(['-vv', '-s', __file__])
-from result_unit import result_unit
+

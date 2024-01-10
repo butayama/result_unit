@@ -1,6 +1,6 @@
 import ast
 
-formula = "x * y / (x + y)"
+formula = 'x**2 / y'
 
 # Parse the formula to an AST
 tree = ast.parse(formula)
