@@ -20,7 +20,6 @@ from pint import UndefinedUnitError, UnitRegistry
 import sympy
 
 symbol_dict = {}
-DIMENSIONS = {'x': 'm', 'y': 'm'}
 ureg = UnitRegistry()
 UnitQuantity = ureg.Quantity
 
@@ -47,15 +46,15 @@ def visit_node(node, indent=''):
     """Utility function to visit and print details of an ast node"""
 
     # print type and attributes of current node
-    print(f'{indent}{type(node).__name__} : {node.__dict__}')
+    # print(f'{indent}{type(node).__name__} : {node.__dict__}')
 
     # iterate over children of current node
     for child_node in ast.iter_child_nodes(node):
         visit_node(child_node, indent + '  ')
 
 
-def post_order(formula):
-    print(f"Post order traversing starts here")
+def post_order(dimensions, formula):
+    # print(f"Post order traversing starts here")
     ast_tree = ast.parse(formula)
     visit_node(ast_tree)
     stack = [(False, ast_tree.body[0].value)]
@@ -64,7 +63,7 @@ def post_order(formula):
     while stack:
         visit, node = stack.pop()
         if isinstance(node, ast.Name):
-            dim = DIMENSIONS.get(node.id, None)
+            dim = dimensions.get(node.id, None)
             out.append(dim)
         elif isinstance(node, ast.BinOp):
             if visit:
@@ -89,8 +88,8 @@ def post_order(formula):
     return out[0]
 
 
-def main(formula):
-    r_dim = post_order(formula)
+def main(dimensions, formula):
+    r_dim = post_order(dimensions, formula)
     print(f"r_dim = {r_dim if r_dim else 'None'}")
 
     # Convert the string to a symbolic expression using the mapping
@@ -99,4 +98,5 @@ def main(formula):
 
 
 if __name__ == '__main__':
-    main("x * y / (x + y)")
+    DIMENSIONS = {'x': 'm', 'y': 'm'}
+    main(DIMENSIONS, "x * y / (x + y)")
