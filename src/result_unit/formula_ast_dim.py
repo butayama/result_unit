@@ -2,14 +2,14 @@
 formula_ast_dim.py
 Abstract Syntax Tree code with stack based post order traversal method.
 Rules to be followed:
-    formula1 = "x + y"  # unit: m + m = m
+    * formula1 = "x + y"  # unit: m + m = m
         formula1.1 = "x + y"  # unit: m + s = ERROR
-    formula2 = "x - y"  # unit: m - m = m
+    * formula2 = "x - y"  # unit: m - m = m
         formula1.1 = "x - y"  # unit: m + s = ERROR
-    formula3 = "x * y"  # unit: m * s = ms
-    formula4 = "x / y"  # unit: m / s = m/s
-    formula5 = "x**2"   # unit: m^2
-    formula6 = "(x + y) / y"  # unit: (m + s) / s = dimensionless
+    * formula3 = "x * y"  # unit: m * s = ms
+    * formula4 = "x / y"  # unit: m / s = m/s
+    * formula5 = "x**2"   # unit: m^2
+    * formula6 = "(x + y) / y"  # unit: (m + s) / s = dimensionless
 These rules must be interpreted along with the correct mathematical order of operations (BIDMAS/BODMAS/PEDMAS).
 """
 
