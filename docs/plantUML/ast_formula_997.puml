@@ -1,0 +1,22 @@
+@startmindmap
+* Module
+** Expr
+*** BinOp
+**** BinOp
+***** BinOp
+****** Constant
+****** Mult
+****** BinOp
+******* x
+******** Load
+******* Pow
+******* Constant
+***** Div
+***** BinOp
+****** y
+******* Load
+****** Pow
+****** Constant
+**** Add
+**** Constant
+@endmindmap

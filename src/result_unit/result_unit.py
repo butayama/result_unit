@@ -69,7 +69,11 @@ def post_order(dimensions, formula):
             if visit:
                 right_dim = out.pop()
                 create_symbol(symbol_dict, right_dim)
-                left_dim = out.pop()
+                try:
+                    left_dim = out.pop()
+                except IndexError:
+                    left_dim = ''
+
                 create_symbol(symbol_dict, left_dim)
                 if isinstance(node.op, ast.Mult):
                     result_dim = left_dim + '*' + right_dim
@@ -77,6 +81,8 @@ def post_order(dimensions, formula):
                     result_dim = left_dim if left_dim == right_dim else 'Dimension Mismatch'
                 elif isinstance(node.op, ast.Div):
                     result_dim = left_dim + '/' + right_dim if left_dim != right_dim else ''
+                elif isinstance(node.op, ast.Pow):
+                    result_dim = left_dim + '/' * right_dim
                 else:
                     result_dim = 'Unhandled Operator'
                 out.append(result_dim)
@@ -99,4 +105,4 @@ def main(dimensions, formula):
 
 if __name__ == '__main__':
     DIMENSIONS = {'x': 'm', 'y': 'm'}
-    main(DIMENSIONS, "x * y / (x + y)")
+    main(DIMENSIONS, "x ** 2")
