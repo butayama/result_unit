@@ -69,10 +69,18 @@ def post_order(dimensions, formula):
             if visit:
                 right_dim = out.pop()
                 create_symbol(symbol_dict, right_dim)
-                try:
+                # check if out has enough dimensions
+                if len(out) >= 1:
                     left_dim = out.pop()
-                except IndexError:
-                    left_dim = ''
+                    create_symbol(symbol_dict, left_dim)  # ToDo hier weitermachen wie extrahiere ich den Wert der Konstanten?
+                if isinstance(node, ast.Constant):
+                    result_dim = right_dim + '**' + node.value
+                else:
+
+                    try:
+                        left_dim = out.pop()
+                    except IndexError as e:  # pop from empty list
+                        raise IndexError(f'{e}')
 
                 create_symbol(symbol_dict, left_dim)
                 if isinstance(node.op, ast.Mult):
@@ -104,5 +112,6 @@ def main(dimensions, formula):
 
 
 if __name__ == '__main__':
-    DIMENSIONS = {'x': 'm', 'y': 'm'}
+    # DIMENSIONS = {'x': 'm', 'y': 'm'}
+    DIMENSIONS = {'x': 'm'}
     main(DIMENSIONS, "x ** 2")
