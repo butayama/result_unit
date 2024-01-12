@@ -47,5 +47,5 @@ def ast_data_table(tree_data):
 
 if __name__ == '__main__':
     # the invocation of the function with formula
-    tree_info = post_order("x ** 2")
+    tree_info = post_order("-z + x / y")
     ast_data_table(tree_info)

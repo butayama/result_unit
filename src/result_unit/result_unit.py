@@ -55,13 +55,15 @@ def create_symbol(symbol_dict_, symbol_name):
         # convert integer constant to string and store it in symbol_dict
         symbol_name = str(symbol_name)
         symbol_dict_[symbol_name] = symbol_name
-    elif symbol_name not in symbol_dict:
-        try:
-            test_quantity = UnitQuantity(1, symbol_name)  # Creates a Quantity with magnitude 1 and the specified unit
-        except UndefinedUnitError as e:
-            raise UnitError(f"Dimension {symbol_name} is not defined in the pint module") from e
-        print(f"{symbol_name} = {test_quantity} is validated as defined in the `pint` module")
-        symbol_dict_[symbol_name] = sympy.symbols(symbol_name)
+    elif symbol_name != '':  # check if the symbol name is not an empty string
+        if symbol_name and symbol_name not in symbol_dict:
+            try:
+                # Creates a Quantity with magnitude 1 and the specified unit
+                test_quantity = UnitQuantity(1, symbol_name)
+            except UndefinedUnitError as e:
+                raise UnitError(f"Dimension {symbol_name} is not defined in the pint module") from e
+            print(f"{symbol_name} = {test_quantity} is validated as defined in the `pint` module")
+            symbol_dict_[symbol_name] = sympy.symbols(symbol_name)
     return symbol_name
 
 def visit_node(node, indent=''):
@@ -82,8 +84,6 @@ def post_order(dimensions, formula):
     visit_node(ast_tree)
     stack = [(False, ast_tree.body[0].value)]
     out = []
-    left_value = 0
-    right_value = 0
 
     while stack:
         visit, node = stack.pop()
@@ -93,33 +93,56 @@ def post_order(dimensions, formula):
         if isinstance(node, ast.Name):
             dim = dimensions.get(node.id, None)
             out.append(dim)
-        elif isinstance(node, ast.BinOp):
+
+
+
+        elif isinstance(node, ast.BinOp) or isinstance(node, ast.UnaryOp):
             if visit:
-                if len(out) <= 1:
-                    raise SecondOperandError(f"Second Operand in {node} is missing")
-                right_dim = out.pop()
-                try:
-                    right_dim = create_symbol(symbol_dict, right_dim)
-                except UnitError:
-                    return 'Dimension Mismatch'
-                left_dim = out.pop()
-                try:
-                    left_dim = create_symbol(symbol_dict, left_dim)
-                except UnitError:
-                    return 'Dimension Mismatch'
-                if isinstance(node.op, ast.Mult):
-                    result_dim = left_dim + '*' + right_dim
-                elif isinstance(node.op, ast.Add) or isinstance(node.op, ast.Sub):
-                    result_dim = left_dim if left_dim == right_dim else 'Dimension Mismatch'
-                elif isinstance(node.op, ast.Div):
-                    result_dim = left_dim + '/' + right_dim if left_dim != right_dim else ''
-                elif isinstance(node.op, ast.Pow):
-                    result_dim = left_dim + '**' + right_dim
-                else:
-                    result_dim = 'Unhandled Operator'
-                out.append(result_dim)
+                if len(out) >= 2:
+                    right_dim = out.pop()
+                    if isinstance(right_dim, int) and not isinstance(node.op, ast.Pow):
+                        right_dim = ''
+                    else:
+                        try:
+                            right_dim = create_symbol(symbol_dict, right_dim)
+                        except UnitError:
+                            return 'Dimension Mismatch'
+                    if not isinstance(node, ast.UnaryOp):
+                        left_dim = out.pop()
+                    elif isinstance(left_dim, int):
+                        left_dim = '1'
+                    else:
+                        try:
+                            left_dim = create_symbol(symbol_dict, left_dim)
+                        except UnitError:
+                            return 'Dimension Mismatch'
+                    if isinstance(node.op, ast.Mult):
+                        if right_dim == '':
+                            result_dim = left_dim
+                        else:
+                            result_dim = left_dim + '*' + right_dim
+                    elif isinstance(node.op, ast.Add) or isinstance(node.op, ast.Sub):
+                        if right_dim == '':
+                            result_dim = left_dim
+                        else:
+                            result_dim = left_dim if left_dim == right_dim else 'Dimension Mismatch'
+                    elif isinstance(node.op, ast.Div):
+                        if right_dim == '':
+                            result_dim = left_dim
+                        else:
+                            result_dim = left_dim + '/' + right_dim
+                    elif isinstance(node.op, ast.Pow):
+                        result_dim = left_dim + '**' + right_dim
+                    elif isinstance(node.op, ast.USub):
+                        result_dim = right_dim
+                    else:
+                        result_dim = 'Unhandled Operator'
+                    out.append(result_dim)
             else:
-                stack.extend([(True, node), (False, node.right), (False, node.left)])
+                if isinstance(node, ast.UnaryOp):
+                    stack.extend([(True, node)])
+                else:
+                    stack.extend([(True, node), (False, node.right), (False, node.left)])
         else:
             print(f"Skipping node type {type(node)} during post_order() traversal.")
 
@@ -137,5 +160,6 @@ def main(dimensions, formula):
 
 if __name__ == '__main__':
     # DIMENSIONS = {'x': 'm', 'y': 'm'}
-    DIMENSIONS = {'x': 'm', 'y': 'm'}
+    DIMENSIONS = {'x': 'm', 'y': 's'}
+    # DIMENSIONS = {"x": "m", "y": "m", "z": "m/m"}
     main(DIMENSIONS, "5*x**2 / y**2 + 7")

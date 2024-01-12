@@ -1,13 +1,5 @@
 import ast
 
-formula = 'x**2'
-
-# Parse the formula to an AST
-tree = ast.parse(formula)
-
-# Print the tree
-print(ast.dump(tree))
-
 
 def to_puml(node, indent=''):
     node_name = node.id if isinstance(node, ast.Name) else type(node).__name__
@@ -17,9 +9,14 @@ def to_puml(node, indent=''):
     return result
 
 
-def tree_to_puml(tree):
-    return '@startmindmap\n' + to_puml(tree) + '@endmindmap'
+def tree_to_puml(tree_):
+    return '@startmindmap\n' + to_puml(tree_) + '@endmindmap'
 
 
-ast_tree = ast.parse(formula)
-print(tree_to_puml(ast_tree))
+if __name__ == '__main__':
+    formula = '-z + x / y'
+    # Parse the formula to an AST
+    tree = ast.parse(formula)
+    # Print the tree
+    # print(ast.dump(tree))
+    print(tree_to_puml(tree))

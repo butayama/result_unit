@@ -8,22 +8,27 @@ FORMULAS = ["x + y", "x - y", "x * y", "x / y", "x**2", "(x + y) / y", "(x + y) 
 @pytest.mark.parametrize("dimensions, formula, expected", [
     ({"x": "m", "y": "s"}, "x + y", 'Dimension Mismatch'),
     ({"x": "m", "y": "m"}, "x + y", 'm'),
+    ({"x": "m", "y": "m", "z": "m"}, "x + y + z", 'm'),
     ({"x": "m", "y": "s"}, "x - y", 'Dimension Mismatch'),
     ({"x": "m", "y": "m"}, "x - y", 'm'),
     ({"x": "m", "y": "s"}, "x * y", 'm*s'),
     ({"x": "m", "y": "m"}, "x * y", 'm*m'),
+    ({"x": "m", "y": "m", "z": "m"}, "x * y * z", 'm*m*m'),
     ({"x": "m", "y": "s"}, "x / y", 'm/s'),
-    ({"x": "m", "y": "m"}, "x / y", ''),
+    ({"x": "m", "y": "m"}, "x / y", 'm/m'),
+    ({"x": "m", "y": "m", "z": "m"}, "x / y / z", 'm/m/m'),
+    ({"x": "m", "y": "m", "z": ""}, "x / y + z", 'm/m'),
+    ({"x": "m", "y": "m", "z": ""}, "-z + x / y", 'm/m'),  # 995
     ({"x": "m", "y": "s"}, "x ** 2", 'm**2'),  # 996
     ({"x": "m", "y": "m"}, "x ** 3", 'm**3'),
     ({"x": "m", "y": "s"}, "x * y / (x + y)", 'Dimension Mismatch'),    # 999
     ({"x": "m", "y": "m"}, "x * y / (x + y)", 'm*m/m'),                     # 999
     ({"x": "m", "y": "s"}, "x**2 / y", 'm**2/s'),    # 998
     ({"x": "m", "y": "m"}, "x**2 / y", 'm**2/m'),        # 998
-    ({"x": "m", "y": "s"}, "5*x**2 / y**2 + 7", 'm**2/s**2'),    # 997 Wie Einheit für Skalare zuordnen???
-    ({"x": "m", "y": "m"}, "5*x**2 / y**2 + 7", ''),        # 997
+    ({"x": "m", "y": "s"}, "5*x**2 / y**2 + 7", '1*m**2/s**2'),    # 997
+    ({"x": "m", "y": "m"}, "5*x**2 / y**2 + 7", '1*m**2/m**2'),        # 997
     ({"x": "m", "y": "s"}, "(x + y) / y", 'Dimension Mismatch'),
-    ({"x": "m", "y": "m"}, "(x + y) / y", ''),
+    ({"x": "m", "y": "m"}, "(x + y) / y", 'm/m'),
     ({"x": "m", "y": "s"}, "(x + y) + y", 'Dimension Mismatch'),
     ({"x": "m", "y": "m"}, "(x + y) + y", 'm'),
 ])
