@@ -25,8 +25,9 @@ FORMULAS = ["x + y", "x - y", "x * y", "x / y", "x**2", "(x + y) / y", "(x + y) 
     ({"x": "m", "y": "m"}, "x * y / (x + y)", 'm*m/m'),                     # 999
     ({"x": "m", "y": "s"}, "x**2 / y", 'm**2/s'),    # 998
     ({"x": "m", "y": "m"}, "x**2 / y", 'm**2/m'),        # 998
-    ({"x": "m", "y": "s"}, "5*x**2 / y**2 + 7", '1*m**2/s**2'),    # 997
-    ({"x": "m", "y": "m"}, "5*x**2 / y**2 + 7", '1*m**2/m**2'),        # 997
+    ({"x": "m", "y": "s"}, "5*x**2 / y**2 + 7", 'm**2/s**2'),    # 997
+    ({"x": "m", "y": "m"}, "5*x**2 / y**2 + 7", 'm**2/m**2'),        # 997
+    ({"x": "m", "y": "s"}, "5*7*x**2 / y**2 + 7", 'm**2/s**2'),
     ({"x": "m", "y": "s"}, "(x + y) / y", 'Dimension Mismatch'),
     ({"x": "m", "y": "m"}, "(x + y) / y", 'm/m'),
     ({"x": "m", "y": "s"}, "(x + y) + y", 'Dimension Mismatch'),
@@ -39,8 +40,8 @@ def test_post_order(dimensions, formula, expected):
 
 def test_simplify_equivalent_formulas():
     for formula in FORMULAS:
-        r_dim1 = post_order(formula)
-        r_dim2 = post_order(str(simplify(sympify(formula))))
+        r_dim1 = post_order({"x": "m", "y": "s"}, formula)
+        r_dim2 = post_order({"x": "m", "y": "s"}, str(simplify(sympify(formula))))
         assert r_dim1 == r_dim2, f"{formula} != {str(simplify(sympify(formula)))} but they should be equivalent"
 
 

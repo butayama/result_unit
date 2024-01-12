@@ -1,4 +1,4 @@
-""" Test rename Master to Main
+"""
 result_unit.py
 Abstract Syntax Tree code with stack based post order traversal method.
 Rules to be followed:
@@ -62,7 +62,7 @@ def create_symbol(symbol_dict_, symbol_name):
                 test_quantity = UnitQuantity(1, symbol_name)
             except UndefinedUnitError as e:
                 raise UnitError(f"Dimension {symbol_name} is not defined in the pint module") from e
-            print(f"{symbol_name} = {test_quantity} is validated as defined in the `pint` module")
+            # print(f"{symbol_name} = {test_quantity} is validated as defined in the `pint` module")
             symbol_dict_[symbol_name] = sympy.symbols(symbol_name)
     return symbol_name
 
@@ -94,8 +94,6 @@ def post_order(dimensions, formula):
             dim = dimensions.get(node.id, None)
             out.append(dim)
 
-
-
         elif isinstance(node, ast.BinOp) or isinstance(node, ast.UnaryOp):
             if visit:
                 if len(out) >= 2:
@@ -119,13 +117,18 @@ def post_order(dimensions, formula):
                     if isinstance(node.op, ast.Mult):
                         if right_dim == '':
                             result_dim = left_dim
+                        elif isinstance(left_dim, int):
+                            result_dim = right_dim
                         else:
                             result_dim = left_dim + '*' + right_dim
                     elif isinstance(node.op, ast.Add) or isinstance(node.op, ast.Sub):
                         if right_dim == '':
                             result_dim = left_dim
                         else:
-                            result_dim = left_dim if left_dim == right_dim else 'Dimension Mismatch'
+                            if left_dim == right_dim:
+                                result_dim = left_dim
+                            else:
+                                return 'Dimension Mismatch'
                     elif isinstance(node.op, ast.Div):
                         if right_dim == '':
                             result_dim = left_dim
@@ -133,18 +136,21 @@ def post_order(dimensions, formula):
                             result_dim = left_dim + '/' + right_dim
                     elif isinstance(node.op, ast.Pow):
                         result_dim = left_dim + '**' + right_dim
+                    elif isinstance(node.op, ast.UnaryOp):
+                        left_dim = out.pop()
                     elif isinstance(node.op, ast.USub):
                         result_dim = right_dim
                     else:
                         result_dim = 'Unhandled Operator'
                     out.append(result_dim)
+
             else:
                 if isinstance(node, ast.UnaryOp):
                     stack.extend([(True, node)])
                 else:
                     stack.extend([(True, node), (False, node.right), (False, node.left)])
         else:
-            print(f"Skipping node type {type(node)} during post_order() traversal.")
+            pass  # print(f"Skipping node type {type(node)} during post_order() traversal.")
 
     return out[0]
 
@@ -162,4 +168,4 @@ if __name__ == '__main__':
     # DIMENSIONS = {'x': 'm', 'y': 'm'}
     DIMENSIONS = {'x': 'm', 'y': 's'}
     # DIMENSIONS = {"x": "m", "y": "m", "z": "m/m"}
-    main(DIMENSIONS, "5*x**2 / y**2 + 7")
+    main(DIMENSIONS, "5*7*x**2 / y**2 + 7")
