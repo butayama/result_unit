@@ -1,4 +1,4 @@
-"""
+""" Test rename Master to Main
 result_unit.py
 Abstract Syntax Tree code with stack based post order traversal method.
 Rules to be followed:
