@@ -10,7 +10,8 @@ Rules to be followed:
     formula4 = "x / y"  # unit: m / s = m/s
     formula5 = "x**2"   # unit: m^2
     formula6 = "(x + y) / y"  # unit: (m + s) / s = dimensionless
-
+Variables as Exponent: raising a unit to the power of another unit is not commonly used or meaningful.
+A VariableExponentError will be raised.
 These rules must be interpreted along with the correct mathematical order of operations (BIDMAS/BODMAS/PEDMAS).
 """
 
@@ -32,15 +33,36 @@ class UnitError(Exception):
         super().__init__(self.message)
 
 
-def create_symbol(symbol_dict, symbol_name):
-    if symbol_name not in symbol_dict:
+class SecondOperandError(Exception):
+    """Exception raised if a BinOp Pow Module has a Variable as right child"""
+
+    def __init__(self, message="BinOp Pow Module has a Variable as right child: raising a unit to the power of another "
+                               "unit is not commonly used or meaningful."):
+        self.message = message
+        super().__init__(self.message)
+
+
+class VariableExponentError(Exception):
+    """Exception raised if a BinOp Module has no left and right child: The second operand is missing"""
+
+    def __init__(self, message="BinOp Module has no left and right child: The second operand is missing"):
+        self.message = message
+        super().__init__(self.message)
+
+
+def create_symbol(symbol_dict_, symbol_name):
+    if isinstance(symbol_name, int):
+        # convert integer constant to string and store it in symbol_dict
+        symbol_name = str(symbol_name)
+        symbol_dict_[symbol_name] = symbol_name
+    elif symbol_name not in symbol_dict:
         try:
             test_quantity = UnitQuantity(1, symbol_name)  # Creates a Quantity with magnitude 1 and the specified unit
         except UndefinedUnitError as e:
             raise UnitError(f"Dimension {symbol_name} is not defined in the pint module") from e
         print(f"{symbol_name} = {test_quantity} is validated as defined in the `pint` module")
-        symbol_dict[symbol_name] = sympy.symbols(symbol_name)
-
+        symbol_dict_[symbol_name] = sympy.symbols(symbol_name)
+    return symbol_name
 
 def visit_node(node, indent=''):
     """Utility function to visit and print details of an ast node"""
@@ -55,34 +77,36 @@ def visit_node(node, indent=''):
 
 def post_order(dimensions, formula):
     # print(f"Post order traversing starts here")
+    # ToDo Variablen als Exponent
     ast_tree = ast.parse(formula)
     visit_node(ast_tree)
     stack = [(False, ast_tree.body[0].value)]
     out = []
+    left_value = 0
+    right_value = 0
 
     while stack:
         visit, node = stack.pop()
+        if isinstance(node, ast.Constant):
+            value = node.value
+            out.append(value)
         if isinstance(node, ast.Name):
             dim = dimensions.get(node.id, None)
             out.append(dim)
         elif isinstance(node, ast.BinOp):
             if visit:
+                if len(out) <= 1:
+                    raise SecondOperandError(f"Second Operand in {node} is missing")
                 right_dim = out.pop()
-                create_symbol(symbol_dict, right_dim)
-                # check if out has enough dimensions
-                if len(out) >= 1:
-                    left_dim = out.pop()
-                    create_symbol(symbol_dict, left_dim)  # ToDo hier weitermachen wie extrahiere ich den Wert der Konstanten?
-                if isinstance(node, ast.Constant):
-                    result_dim = right_dim + '**' + node.value
-                else:
-
-                    try:
-                        left_dim = out.pop()
-                    except IndexError as e:  # pop from empty list
-                        raise IndexError(f'{e}')
-
-                create_symbol(symbol_dict, left_dim)
+                try:
+                    right_dim = create_symbol(symbol_dict, right_dim)
+                except UnitError:
+                    return 'Dimension Mismatch'
+                left_dim = out.pop()
+                try:
+                    left_dim = create_symbol(symbol_dict, left_dim)
+                except UnitError:
+                    return 'Dimension Mismatch'
                 if isinstance(node.op, ast.Mult):
                     result_dim = left_dim + '*' + right_dim
                 elif isinstance(node.op, ast.Add) or isinstance(node.op, ast.Sub):
@@ -90,7 +114,7 @@ def post_order(dimensions, formula):
                 elif isinstance(node.op, ast.Div):
                     result_dim = left_dim + '/' + right_dim if left_dim != right_dim else ''
                 elif isinstance(node.op, ast.Pow):
-                    result_dim = left_dim + '/' * right_dim
+                    result_dim = left_dim + '**' + right_dim
                 else:
                     result_dim = 'Unhandled Operator'
                 out.append(result_dim)
@@ -113,5 +137,5 @@ def main(dimensions, formula):
 
 if __name__ == '__main__':
     # DIMENSIONS = {'x': 'm', 'y': 'm'}
-    DIMENSIONS = {'x': 'm'}
-    main(DIMENSIONS, "x ** 2")
+    DIMENSIONS = {'x': 'm', 'y': 'm'}
+    main(DIMENSIONS, "5*x**2 / y**2 + 7")
