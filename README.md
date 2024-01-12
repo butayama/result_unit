@@ -3,7 +3,7 @@
 Get the result unit of an arbitrary multivar arihmetic function
 
 ## Documentation
-[![Documentation Status](https://readthedocs.org/projects/result_unit/badge/?version=latest)](https://result_unit.readthedocs.io/en/latest/?badge=latest)
+[![Documentation Status](https://readthedocs.org/projects/result-unit/badge/?version=latest)](https://result-unit.readthedocs.io/en/latest/?badge=latest)
 
 ## **not yet deployed at PyPi**
 before deployment docs and tests are to be edited / written

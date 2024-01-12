@@ -1,0 +1,15 @@
+right,type,id_parent,col_offset,body,node_id,id,type_ignores,left,end_col_offset,value,end_lineno,op,lineno,operand,parent,ctx
+,Module,0,,[<ast.Expr object at 0x7f4dd293ba50>],1,,[],,,,,,,,,
+,Expr,1,0,,2,,,,10,<ast.BinOp object at 0x7f4dd293ba90>,1,,1,,Module,
+<ast.BinOp object at 0x7f4dd2995ad0>,BinOp,2,0,,3,,,<ast.UnaryOp object at 0x7f4dd2995a10>,10,,1,<ast.Add object at 0x7f4dd2976ed0>,1,,Expr,
+,UnaryOp,3,0,,4,,,,2,,1,<ast.USub object at 0x7f4dd2977850>,1,<ast.Name object at 0x7f4dd2995b10>,BinOp,
+,USub,4,,,5,,,,,,,,,,UnaryOp,
+,Name,4,1,,6,z,,,2,,1,,1,,UnaryOp,<ast.Load object at 0x7f4dd29769d0>
+,Load,6,,,7,,,,,,,,,,Name,
+,Add,3,,,8,,,,,,,,,,BinOp,
+<ast.Name object at 0x7f4dd2994890>,BinOp,3,5,,9,,,<ast.Name object at 0x7f4dd2995a90>,10,,1,<ast.Div object at 0x7f4dd29770d0>,1,,BinOp,
+,Name,9,5,,10,x,,,6,,1,,1,,BinOp,<ast.Load object at 0x7f4dd29769d0>
+,Load,10,,,11,,,,,,,,,,Name,
+,Div,9,,,12,,,,,,,,,,BinOp,
+,Name,9,9,,13,y,,,10,,1,,1,,BinOp,<ast.Load object at 0x7f4dd29769d0>
+,Load,13,,,14,,,,,,,,,,Name,
