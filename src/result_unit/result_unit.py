@@ -158,8 +158,9 @@ def post_order(dimensions, formula):
 def formula_result_unit(dimensions, formula):
     r_dim = post_order(dimensions, formula)
     # Convert the string to a symbolic expression using the mapping
-    base_dim = sympy.sympify(r_dim, locals=symbol_dict)
-    return base_dim
+    # base_dim = sympy.sympify(r_dim, locals=symbol_dict)
+    # return base_dim
+    return r_dim
 
 
 if __name__ == '__main__':
