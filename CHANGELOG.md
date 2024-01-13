@@ -2,6 +2,13 @@
 
 
 
+## v0.1.1 (2024-01-13)
+
+### Fix
+
+* fix(result_unit): refactor formula_result_unit ([`f78da88`](https://github.com/butayama/result_unit/commit/f78da889a66d31e9d4fb24690e5b1da33d056e79))
+
+
 ## v0.1.0 (2024-01-13)
 
 ### Documentation
