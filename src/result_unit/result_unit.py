@@ -155,17 +155,21 @@ def post_order(dimensions, formula):
     return out[0]
 
 
-def main(dimensions, formula):
+def formula_result_unit(dimensions, formula):
     r_dim = post_order(dimensions, formula)
-    print(f"r_dim = {r_dim if r_dim else 'None'}")
-
     # Convert the string to a symbolic expression using the mapping
     base_dim = sympy.sympify(r_dim, locals=symbol_dict)
-    print(f" base_dim = {base_dim}")
+    return base_dim
 
 
 if __name__ == '__main__':
     # DIMENSIONS = {'x': 'm', 'y': 'm'}
     DIMENSIONS = {'x': 'm', 'y': 's'}
     # DIMENSIONS = {"x": "m", "y": "m", "z": "m/m"}
-    main(DIMENSIONS, "5*7*x**2 / y**2 + 7")
+    formula = "5*7*x**2 / y**2 + 7"
+    r_dim = post_order(DIMENSIONS, formula)
+    print(f"r_dim = {r_dim if r_dim else 'None'}")
+    # Convert the string to a symbolic expression using the mapping
+    base_dim = sympy.sympify(r_dim, locals=symbol_dict)
+    print(f" base_dim = {base_dim}")
+    print(f"formula_result_unit: {formula_result_unit(DIMENSIONS, formula)}")

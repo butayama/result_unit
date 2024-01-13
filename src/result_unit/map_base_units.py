@@ -44,12 +44,12 @@ def create_sympy_quantity(magnitude, unit):
     return magnitude * unit
 
 
-def sympy_to_pint_quantity(sympy_quantity):
-    print(type(sympy_quantity))
-    if isinstance(sympy_quantity, (int, float, Float, Integer)):  # handle primitive types
-        return create_pint_quantity(sympy_quantity, 'dimensionless')
+def sympy_to_pint_quantity(sympy_quantity_):
+    print(type(sympy_quantity_))
+    if isinstance(sympy_quantity_, (int, float, Float, Integer)):  # handle primitive types
+        return create_pint_quantity(sympy_quantity_, 'dimensionless')
 
-    value, sympy_unit = sympy_quantity.args
+    value, sympy_unit = sympy_quantity_.args
 
     # Check if sympy_unit is a string representation of a sympy physical unit
     sympy_units = [meter, second, ampere, candela, kilogram, mole, kelvin, radian]
