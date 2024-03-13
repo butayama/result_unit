@@ -14,7 +14,7 @@ def tree_to_puml(tree_):
 
 
 if __name__ == '__main__':
-    formula = '-z + x / y'
+    formula = 'x/(y**2*cos(PI/2))'
     # Parse the formula to an AST
     tree = ast.parse(formula)
     # Print the tree

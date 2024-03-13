@@ -1,0 +1,24 @@
+@startmindmap
+'  x/(y**2*cos(PI/2))
+* Module
+** Expr
+*** BinOp
+**** x
+***** Load
+**** Div
+**** BinOp
+***** BinOp
+****** y
+******* Load
+****** Pow
+****** Constant
+***** Mult
+***** Call
+****** cos
+******* Load
+****** BinOp
+******* PI
+******** Load
+******* Div
+******* Constant
+@endmindmap

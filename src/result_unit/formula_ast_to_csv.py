@@ -4,6 +4,7 @@ import csv
 # Global variable for node count
 node_counter = 0
 
+
 def visit_node(node, tree_data, id_parent, type_parent=''):
     global node_counter
     node_counter += 1
@@ -34,7 +35,7 @@ def post_order(formula):
 
 def ast_data_table(tree_data):
     # write to csv
-    with open('../../csv/ast_data.csv', 'w', newline='') as csvfile:
+    with open('../../csv/ast_data_994.csv', 'w', newline='') as csvfile:
         # get all unique keys
         fieldnames = set(k for d in tree_data for k in d.keys())
 
@@ -45,7 +46,8 @@ def ast_data_table(tree_data):
         for row in tree_data:
             writer.writerow(row)
 
+
 if __name__ == '__main__':
     # the invocation of the function with formula
-    tree_info = post_order("-z + x / y")
+    tree_info = post_order("x / y**2 /cos(PI/2)")
     ast_data_table(tree_info)
